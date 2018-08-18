@@ -5,7 +5,7 @@ class componentName extends Component {
   render() {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="#">
+        <a className="navbar-brand" href={null}>
           Navbar
         </a>
         <button
@@ -28,7 +28,7 @@ class componentName extends Component {
               </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
+              <a className="nav-link" href={null}>
                 Vew Trip
               </a>
             </li>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import FormErrors from "../errors/FormErrors";
+import { FormErrors } from "../errors/FormErrors";
 
 class componentName extends Component {
   constructor(props) {
@@ -19,8 +19,83 @@ class componentName extends Component {
         mileage: "",
         trip: ""
       },
-      formValid: false
+      formValid: false,
+      dateValid: false,
+      pplValid: false,
+      costValid: false,
+      litresValid: false,
+      mileageValid: false,
+      tripValid: false
     };
+  }
+
+  handleUserInput = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({ [name]: value }, () => {
+      this.validateField(name, value);
+    });
+  };
+
+  validateField(fieldName, value) {
+    let fieldValidationErrors = this.state.formErrors;
+    let dateValid = this.state.dateValid;
+    let pplValid = this.state.pplValid;
+    let litresValid = this.state.litresValid;
+    let costValid = this.state.costValid;
+    let mileageValid = this.state.mileageValid;
+    let tripValid = this.state.tripValid;
+
+    switch (fieldName) {
+      case "date":
+        dateValid = value.match(
+          /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i
+        );
+        fieldValidationErrors.date = dateValid ? "" : " is invalid";
+        break;
+      case "ppl":
+        pplValid = value.match(/^(\d+\.\d{3})$/i);
+        fieldValidationErrors.ppl = pplValid ? "" : " is invalid";
+        break;
+      case "cost":
+        costValid = value.match(/^(\d{1,3}.\d{1,2})$/i);
+        fieldValidationErrors.cost = costValid ? "" : " is invalid";
+        break;
+      case "litres":
+        litresValid = value.match(/^(\d{1,2}.\d{1,2})$/i);
+        fieldValidationErrors.litres = litresValid ? "" : " is invalid";
+        break;
+      case "mileage":
+        mileageValid = value.match(/^(\d{1,6})$/i);
+        fieldValidationErrors.mileage = mileageValid ? "" : " is invalid";
+        break;
+      case "trip":
+        tripValid = value.match(/^(\d{1,3})$/i);
+        fieldValidationErrors.trip = tripValid ? "" : " is invalid";
+        break;
+      default:
+        break;
+    }
+    this.setState(
+      {
+        formErrors: fieldValidationErrors,
+        dateValid: dateValid,
+        pplValid: pplValid,
+        litresValid: litresValid,
+        costValid: costValid,
+        mileageValid: mileageValid,
+        tripValid: tripValid
+      },
+      this.validateForm
+    );
+  }
+
+  validateForm() {
+    this.setState({ formValid: this.state.dateValid });
+  }
+
+  errorClass(error) {
+    return error.length === 0 ? "" : "has-error";
   }
 
   render() {
@@ -29,40 +104,49 @@ class componentName extends Component {
         <div className="col-md-8">
           <form>
             <div className="form-row p-2">
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="inputGroupDate">
-                    Date
-                  </span>
+              <div
+                className={`form-group ${this.errorClass(
+                  this.state.formErrors.date
+                )}`}
+              >
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="inputGroupDate">
+                      Date
+                    </span>
+                  </div>
+                  <input
+                    type="date"
+                    className="form-control"
+                    name="date"
+                    placeholder="date"
+                    aria-describedby="inputGroupDate"
+                    required
+                    value={this.state.date}
+                    onChange={this.handleUserInput}
+                  />
                 </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="validationDate"
-                  placeholder="date"
-                  aria-describedby="inputGroupDate"
-                  required
-                  value={this.state.date}
-                  onChange={event => this.handleUserInput(event)}
-                />
               </div>
             </div>
             <div className="form-row p-2">
-              <div className="input-group">
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="inputGroupPpl">
-                    £/ppl
-                  </span>
+              <div className="has-error">
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="inputGroupPpl">
+                      £/ppl
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="ppl"
+                    placeholder="£ Pence Per Litre"
+                    aria-describedby="inputGroupPpl"
+                    required
+                    value={this.state.ppl}
+                    onChange={this.handleUserInput}
+                  />
                 </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="validationPpl"
-                  placeholder="£ Pence Per Litre"
-                  aria-describedby="inputGroupPpl"
-                  required
-                  value={this.state.ppl}
-                />
               </div>
             </div>
             <div className="form-row p-2">
@@ -75,11 +159,12 @@ class componentName extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  id="validationLitres"
+                  name="litres"
                   placeholder="litres"
                   aria-describedby="inputLitres"
                   required
                   value={this.state.litres}
+                  onChange={this.handleUserInput}
                 />
               </div>
             </div>
@@ -93,11 +178,12 @@ class componentName extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  id="validationCost"
+                  name="cost"
                   placeholder="£"
                   aria-describedby="inputGroupCost"
                   required
                   value={this.state.cost}
+                  onChange={this.handleUserInput}
                 />
               </div>
             </div>
@@ -111,11 +197,12 @@ class componentName extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  id="validationMileage"
+                  name="mileage"
                   placeholder="mileage"
                   aria-describedby="inputGroupMileage"
                   required
                   value={this.state.mileage}
+                  onChange={this.handleUserInput}
                 />
               </div>
             </div>
@@ -129,12 +216,24 @@ class componentName extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  id="validationTrip"
+                  name="trip"
                   placeholder="trip"
                   aria-describedby="inputGroupTrip"
                   required
                   value={this.state.trip}
+                  onChange={this.handleUserInput}
                 />
+              </div>
+            </div>
+            <div className="form-row p-2">
+              <div className="input-group">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={!this.state.formValid}
+                >
+                  Submit
+                </button>
               </div>
             </div>
           </form>
@@ -146,47 +245,6 @@ class componentName extends Component {
         </div>
       </div>
     );
-  }
-
-  handleUserInput(e) {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({ [name]: value }, () => {
-      this.validateField(name, value);
-    });
-  }
-
-  validateField(fieldName, value) {
-    let fieldValidationErrors = this.state.formErrors;
-    let emailValid = this.state.emailValid;
-    let passwordValid = this.state.passwordValid;
-
-    switch (fieldName) {
-      case "date":
-        emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-        fieldValidationErrors.email = emailValid ? "" : " is invalid";
-        break;
-      case "password":
-        passwordValid = value.length >= 6;
-        fieldValidationErrors.password = passwordValid ? "" : " is too short";
-        break;
-      default:
-        break;
-    }
-    this.setState(
-      {
-        formErrors: fieldValidationErrors,
-        emailValid: emailValid,
-        passwordValid: passwordValid
-      },
-      this.validateForm
-    );
-  }
-
-  validateForm() {
-    this.setState({
-      formValid: this.state.emailValid && this.state.passwordValid
-    });
   }
 }
 

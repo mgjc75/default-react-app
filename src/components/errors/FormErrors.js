@@ -1,24 +1,17 @@
-import React, { Component } from "react";
+import React from "react";
 
-class FormErrors extends Component {
-  render() {
-    const { formErrors } = this.props;
-    return (
-      <div className="formErrors">
-        {Object.keys(formErrors).map((fieldName, i) => {
-          if (formErrors[fieldName].length > 0) {
-            return (
-              <p key={i}>
-                {fieldName} {formErrors[fieldName]}
-              </p>
-            );
-          } else {
-            return "";
-          }
-        })}
-      </div>
-    );
-  }
-}
-
-export default FormErrors;
+export const FormErrors = ({ formErrors }) => (
+  <div className="formErrors">
+    {Object.keys(formErrors).map((fieldName, i) => {
+      if (formErrors[fieldName].length > 0) {
+        return (
+          <p key={i}>
+            {fieldName} {formErrors[fieldName]}
+          </p>
+        );
+      } else {
+        return "";
+      }
+    })}
+  </div>
+);
